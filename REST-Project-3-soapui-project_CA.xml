@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="65fbe9a2-4760-40fe-930f-8f9649b45700" activeEnvironment="Default" name="REST Project 3" soapui-version="5.7.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" id="98a1ed2b-bf77-4d36-b39a-96249de00ad2" wadlVersion="http://wadl.dev.java.net/2009/02" name="https://restcountries.com" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints><con:endpoint>https://restcountries.com</con:endpoint></con:endpoints><con:resource name="Lkr" path="/v3.1/currency/lkr" id="aed77aa2-78ed-461c-ad76-6b4b959ccbfd"><con:settings/><con:parameters><con:parameter><con:name>capital</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter></con:parameters><con:method name="Lkr 1" id="9bf783b4-5751-4b60-823d-7c0c14a4787e" method="GET"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element>Response</con:element></con:representation><con:request name="Capital" id="2a8056d7-6ebf-44b9-8ad2-5df311531d89" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://restcountries.com</con:endpoint><con:request/><con:originalUri>https://restcountries.com/v3.1/currency/lkr</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="capital" value="${#TestSuite#capital}" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>capital</con:entry></con:parameterOrder></con:request></con:method></con:resource></con:interface><con:testSuite id="4b22d61a-7543-4a68-803f-51d871fcf64f" name="TestSuite1"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="bfda2be2-7c2a-41b1-af3d-ce1a5565be03" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase1" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="getCapital" id="7ee0f599-59f0-454f-88f9-e19e319fbf08"><con:settings/><con:config service="https://restcountries.com" resourcePath="/v3.1/currency/lkr" methodName="Lkr 1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="getCapital" id="2a8056d7-6ebf-44b9-8ad2-5df311531d89" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://restcountries.com</con:endpoint><con:request/><con:originalUri>https://restcountries.com/v3.1/currency/lkr</con:originalUri><con:assertion type="Simple Contains" id="27fb88a3-9f85-433d-87ba-09b8cc2de053" name="Contains"><con:configuration><token>Colombo</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="capital" value="${#TestSuite#capital}" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>capital</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="groovy" name="Groovy Script" id="8c5c34f1-ef89-4642-8799-bba1052e5ed8"><con:settings/><con:config><script>import groovy.json.JsonSlurper
+import jxl.*
+import jxl.write.*
+
+WritableWorkbook workbook=Workbook.createWorkbook(new File("D:\\data.xls"))
+WritableSheet sheet1=workbook.createSheet("Work",1)
+
+int r=1
+int c=1
+for(i=0;i&lt;r;i++)
+{
+	for(j=0;j&lt;c;j++)
+	{
+		Label label=new Label(j,i,"Colombo")
+		sheet1.addCell(label)
+	}
+}
+log.info"--->Excel is created "
+
+workbook.write()
+workbook.close()
+
+Workbook work=Workbook.getWorkbook(new File("D:\\data.xls"))
+Sheet sh=work.getSheet("Work")
+def d
+rc=sh.getRows()
+cc=sh.getColumns()
+for(int i=0;i&lt;rc;i++)
+{
+	for(j=0;j&lt;cc;j++)
+	{
+		Cell var=sh.getCell(j,i)
+		log.info" Given Capital--->"+ var.getContents()
+		data=var.getContents()
+	}
+}
+
+def tCase=testRunner.testCase.testSuite.testCases["TestCase1"]
+testRunner.testCase.testSuite.setPropertyValue("Capital",d)
+def getIdTestStep1=tCase.testSteps["getCapital"]
+def as1=getIdTestStep1.run(testRunner,context)
+def responseJson1=getIdTestStep1.testRequest.response.responseContent
+log.info(responseJson1)
+
+def ass1=as1.getStatus().toString()
+
+log.info(ass1)
+if(ass1.equals("OK"))
+{
+	log.info("API passed")
+}
+else
+{
+	log.info("API failed")
+}
+work.close()
+</script></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>Capital</con:name><con:value xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:property></con:properties></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/></con:soapui-project>
